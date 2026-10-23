@@ -21,18 +21,13 @@ const CardList: React.FC<CardListProps> = ({ postData, pageSlug, totalPosts, ite
     const searchParams = useSearchParams();
     const typeDropdownRef = useRef<HTMLDivElement>(null);
     const categoryDropdownRef = useRef<HTMLDivElement>(null);
-    const [dropdownValue, setDropdownValue] = useState<string | null>(() => {
-        const urlType = searchParams.get('type');
-        if (urlType) return decodeURIComponent(urlType);
-        return pageSlug === 'news' ? 'Media Coverage' : pageSlug === 'gallery' ? 'Photo' : pageSlug === 'publications' ? 'Success Stories' : null;
-    });
+    const dropdownValue = searchParams.get('type') || (pageSlug === 'news' ? 'Media Coverage' : pageSlug === 'gallery' ? 'Photo' : pageSlug === 'publications' ? 'Success Stories' : null);
 
     const [selectedImage, setSelectedImage] = useState<string | null | undefined>(null);
     const [selectedMediaType, setSelectedMediaType] = useState<string | null | undefined>(null);
     const [dropdownActive, setDropdownActive] = useState<boolean>(false)
     const [categoryDropdownActive, setCategoryDropdownActive] = useState<boolean>(false)
     const router = useRouter();
-    const hasMounted = useRef(false);
     const currentItems = postData.slice(0, itemsPerPage);
 
 
@@ -43,34 +38,13 @@ const CardList: React.FC<CardListProps> = ({ postData, pageSlug, totalPosts, ite
         return [];
     }, [pageSlug]);
 
-    useEffect(() => {
-        if (!dropdownValue) return;
-
-        if (!hasMounted.current) {
-            hasMounted.current = true;
-            return;
-        }
-
-        if (searchParams.get('type') === dropdownValue) return;
-
-        const selectedType = dropdownInfo.find(item => item.label === dropdownValue);
-        const filterValue = encodeURIComponent(dropdownValue);
-
+    const setDropdownValue = (type: string) => {
         const newParams = new URLSearchParams(searchParams?.toString() || '');
-        newParams.set('type', filterValue);
-
-        // if (selectedType?.taxonomy) {
-        //     newParams.set('taxonomy', selectedType.taxonomy);
-        // }
-
-        // if (pageSlug === 'gallery' && dropdownCategoryValue) {
-        //     newParams.set('category', dropdownCategoryValue);
-        // }
-
+        newParams.set('type', type);
+        newParams.delete('page');
         const newUrl = `${pathname}?${newParams.toString()}`;
         router.push(newUrl, { scroll: false });
-
-    }, [dropdownInfo, dropdownValue, pageSlug, pathname, router, searchParams]);
+    };
 
 
 
@@ -101,15 +75,6 @@ const CardList: React.FC<CardListProps> = ({ postData, pageSlug, totalPosts, ite
             document.removeEventListener('keydown', handleClickOrEscape);
         };
     }, []);
-
-    useEffect(() => {
-        const params = new URLSearchParams(searchParams?.toString() || '');
-        if (params.has('page')) {
-            params.delete('page');
-            const newUrl = `${pathname}?${params.toString()}`;
-            router.push(newUrl);
-        }
-    }, [dropdownValue]);
 
     return (
         <>
@@ -187,14 +152,11 @@ const CardList: React.FC<CardListProps> = ({ postData, pageSlug, totalPosts, ite
                                             ? post.media.filter(item => item.type === 'image' && item?.cdnPath?.trim())
                                             : [{ cdnPath: '/images/fallback_Image.jpg' }]
                                         ).map((item, index) => {
-                                            console.log(post)
                                             const videoUrl = post?.metaInfo?.video_url;
                                             const isVideo = (post?.metaInfo?.type === 'video' || Boolean(post?.metaInfo?.video_url));
-                                            console.log(isVideo)
                                             const handleClick = () => {
                                                 setSelectedImage(isVideo ? videoUrl : item?.cdnPath);
                                                 setSelectedMediaType(isVideo ? 'video' : 'image');
-                                                console.log("clicked")
                                             };
 
                                             return (

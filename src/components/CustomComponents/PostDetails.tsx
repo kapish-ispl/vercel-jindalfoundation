@@ -10,9 +10,13 @@ import Publications from "@/components/Slug/Publications";
 
 const PostDetails = (props: any) => {
     const router = useRouter();
-    const [detailData, setDetailData] = useState<any>(null);
+    const [detailData, setDetailData] = useState<any>(props.initialData || null);
 
     useEffect(() => {
+        if (props.initialData) {
+            setDetailData(props.initialData);
+            return;
+        }
         const getData = async () => {
             if (props.slug !== '') {
                 const taxonomyInfo = await serverRequest(
@@ -31,7 +35,7 @@ const PostDetails = (props: any) => {
         };
 
         getData();
-    }, [props.parentSlug, props.slug, router]);
+    }, [props.parentSlug, props.slug, props.initialData, router]);
 
 
     const renderComponent = () => {

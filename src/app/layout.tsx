@@ -10,6 +10,9 @@ import Footer from "@/components/Templates/FooterTemplate";
 import { getMenuData } from "@/lib/getMenuData";
 import { GoogleTagManager } from '@next/third-parties/google'
 
+import { Metadata } from "next";
+import { SITE_URL } from "@/lib/seo";
+
 const genericFont = Poppins({
   variable: "--font-primary",
   subsets: ["latin"],
@@ -22,6 +25,9 @@ const secondaryFont = Bebas_Neue({
   weight: "400"
 });
 
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+};
 
 export default async function RootLayout({
   children,

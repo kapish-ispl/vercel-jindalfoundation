@@ -2,33 +2,40 @@ import { serverRequest } from '@/services/getServerSideRender';
 import { CONSTANTS } from '@/config/constant';
 import { decodeHtmlEntities } from '@/lib/htmlUtils';
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { getCanonicalUrl, SITE_URL } from '@/lib/seo';
+import { getPageNumber, type PageSearchParams } from '@/lib/postListQuery';
 
 interface GenerateMetadataOptions {
   slug: string;
   endpoint: string;
   fallbackTitle?: string;
+  pathPrefix?: string;
+  searchParams?: PageSearchParams;
 }
 
-export async function getPageMetadata({ slug, endpoint, fallbackTitle = 'Jindal Foundation' }: GenerateMetadataOptions): Promise<Metadata> {
-  const fetchedInfo = await serverRequest({}, `${endpoint}?slug=${slug}&excludeUrl=1`, CONSTANTS.REQUEST_GET);
+export async function getPageMetadata({ slug, endpoint, fallbackTitle = 'Jindal Foundation', pathPrefix, searchParams = {} }: GenerateMetadataOptions): Promise<Metadata> {
+  const fetchedInfo = await serverRequest({}, `${endpoint}?slug=${encodeURIComponent(slug)}&excludeUrl=1`, CONSTANTS.REQUEST_GET);
 
   const pageData = fetchedInfo?.data;
 
   if (!pageData || (Array.isArray(pageData) && pageData.length === 0)) {
-    return {
-      title: 'Page Not Found',
-      description: 'The requested page could not be found.',
-    };
+    notFound();
   }
 
-  const metaTitleValue = pageData?.meta?.title?.trim() || pageData?.meta_title?.trim();
+  const pageTitle = decodeHtmlEntities(pageData.title?.trim() || slug.replace(/-/g, ' ') || fallbackTitle);
+  const metaTitleValue = decodeHtmlEntities(pageData?.meta?.title?.trim() || pageData?.meta_title?.trim() || pageTitle);
 
-  const metaTitle = decodeHtmlEntities(metaTitleValue ? `${metaTitleValue} | Jindal Foundation` : fallbackTitle);
+  const metaTitle = /jindal foundation/i.test(metaTitleValue) ? metaTitleValue : `${metaTitleValue} | Jindal Foundation`;
+
+  const contentDescription = decodeHtmlEntities((pageData.description || pageData.content || '')
+    .replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()).slice(0, 160);
 
   const metaDescription = decodeHtmlEntities(
     pageData?.meta?.description ||
     pageData?.meta_description ||
-    "Jindal Foundation's commitment to social change through education, healthcare and sustainable development initiatives. Join us in making a difference.",
+    contentDescription ||
+    `Explore ${pageTitle} at Jindal Foundation and learn about our initiatives and their impact on communities.`,
   );
 
   const metaKeywords = decodeHtmlEntities(
@@ -38,8 +45,17 @@ export async function getPageMetadata({ slug, endpoint, fallbackTitle = 'Jindal 
     'Jindal Foundation, education, healthcare, sustainable development',
   );
 
-  const metaImage = "https://jindalfoundation.com/images/logo/jf-main-logo.jpg";
-  const siteUrl = `https://jindalfoundation.com/${slug}`;
+  const metaImage = `${SITE_URL}/images/logo/jf-main-logo.jpg`;
+  const canonical = new URL(getCanonicalUrl(slug.trim(), pathPrefix));
+  // Pagination and categories change the content. Tracking parameters never do.
+  if (/<custompost\b/i.test(pageData.content || '')) {
+    const page = getPageNumber(typeof searchParams.page === 'string' ? searchParams.page : undefined);
+    if (page > 1) canonical.searchParams.set('page', String(page));
+    const type = typeof searchParams.type === 'string' ? searchParams.type : '';
+    const defaults: Record<string, string> = { publications: 'Success Stories', news: 'Media Coverage', gallery: 'photo' };
+    if (type && type.toLowerCase() !== defaults[slug]?.toLowerCase()) canonical.searchParams.set('type', type);
+  }
+  const siteUrl = canonical.toString();
 
   return {
     title: metaTitle,

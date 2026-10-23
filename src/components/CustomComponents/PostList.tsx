@@ -4,7 +4,8 @@ import { useSearchParams } from "next/navigation";
 import { GET_POST_ENDPOINT } from "@/config/apiConfig";
 import { CONSTANTS } from "@/config/constant";
 import { serverRequest } from "@/services/getServerSideRender";
-import { PostData } from "@/types/postData";
+import { PostData, InitialPostList } from "@/types/postData";
+import { getPageNumber, getPostListQuery } from '@/lib/postListQuery';
 import CardList from "./CardList";
 import PurposeInPractice from "./PurposeInPractice";
 import NewsCardList from "./NewsCardList";
@@ -25,6 +26,7 @@ export interface PostListProps {
     component: string;
     itemsperpage: number;
     mode?: "server" | "client";
+    initialData?: InitialPostList;
 }
 
 const componentMap: Record<string, React.ComponentType<SharedComponentProps>> = {
@@ -40,43 +42,29 @@ const PostList = ({
     component,
     itemsperpage,
     mode = "client",
+    initialData,
 }: PostListProps) => {
     const searchParams = useSearchParams();
-    const page = parseInt(searchParams.get('page') || '1', 10);
+    const page = getPageNumber(searchParams.get('page'));
     const type = searchParams.get('type');
     const category = searchParams.get('category');
     const Limit = Number(itemsperpage) || 9;
 
-    const [postData, setPostData] = useState<PostData[]>([]);
-    const [totalPosts, setTotalPosts] = useState<number>(0);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const query = getPostListQuery(slug, pageSlug, Limit, page, type);
+    const hasInitialData = initialData?.query === query;
+    const [postData, setPostData] = useState<PostData[]>(initialData?.posts || []);
+    const [totalPosts, setTotalPosts] = useState<number>(initialData?.total ?? 0);
+    const [isLoading, setIsLoading] = useState<boolean>(!hasInitialData);
 
     useEffect(() => {
+        if (initialData?.query === query) {
+            setPostData(initialData.posts);
+            setTotalPosts(initialData.total);
+            setIsLoading(false);
+            return;
+        }
         let isMounted = true;
-        let slugInfo = slug;
-
-        if (pageSlug === "news") {
-            if (!type) {
-                slugInfo += `&metaInfo[type_1602134867]=Media Coverage`;
-            } else {
-                slugInfo += `&metaInfo[type_1602134867]=${type}`;
-            }
-        }
-
-        if (pageSlug === "publications") {
-            const selectedType = type || "Success Stories";
-            slugInfo += `&metaInfo[category_1761552186]=${selectedType}`;
-        }
-
-        if (pageSlug === "gallery" || slug === "gallery") {
-            const selectedType = type || "photo";
-            slugInfo += `&metaInfo[type_1617597580]=${selectedType}`;
-        }
-
-        const pageNum = parseInt(String(page) || "1", 10);
-        const itemsLimit = Number(Limit) || 9;
-        const offsetParam = pageNum > 1 ? `&offset=${(pageNum - 1) * itemsLimit}` : "";
-        const url = `${GET_POST_ENDPOINT}?slug=${slugInfo}&limit=${itemsLimit}${offsetParam}&excludeUrl=1`;
+        const url = `${GET_POST_ENDPOINT}?${query}`;
 
         const loadPosts = async () => {
             if (!slug) return;
@@ -118,20 +106,20 @@ const PostList = ({
         return () => {
             isMounted = false;
         };
-    }, [page, slug, type, category, pageSlug, Limit, mode]);
+    }, [query, slug, category, mode, initialData]);
 
     const PostComponentRender = componentMap[component];
 
     return (
         <>
-            {isLoading ? (
+            {!hasInitialData && isLoading ? (
                 <Loader minHeight="300px" text="Loading posts..." />
             ) : (
                 PostComponentRender && (
                     <PostComponentRender
-                        postData={postData}
+                        postData={hasInitialData ? initialData.posts : postData}
                         pageSlug={pageSlug}
-                        totalPosts={totalPosts}
+                        totalPosts={hasInitialData ? initialData.total : totalPosts}
                         itemsPerPage={itemsperpage}
                     />
                 )

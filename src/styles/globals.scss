@@ -3130,9 +3130,7 @@ p {
   }
 }
 
-/* Import Slick CSS here to fix TS(2882) import errors */
-@import 'slick-carousel/slick/slick.css';
-@import 'slick-carousel/slick/slick-theme.css';
+
 
 /* ==========================================================================
    Global Slick Dots: Show max 5 dots with active dot centered
@@ -4621,9 +4619,7 @@ p {
    live separately and are NOT part of this file)
 ========================================================= */
 
-/* Import Slick CSS here so this file works if included on its own */
-@import 'slick-carousel/slick/slick.css';
-@import 'slick-carousel/slick/slick-theme.css';
+
 
 .regionOps-slider-section {
   position: relative;

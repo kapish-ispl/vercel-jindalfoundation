@@ -3,6 +3,7 @@
 import React from 'react';
 import ReactPaginate from 'react-paginate';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { getPageNumber } from '@/lib/postListQuery';
 
 export interface PaginationProps {
     totalPosts: number;
@@ -16,15 +17,21 @@ const Pagination: React.FC<PaginationProps> = ({ totalPosts, itemsPerPage, class
     const router = useRouter();
 
     const pageCount = Math.ceil(totalPosts / itemsPerPage);
-    const currentPage = Number(searchParams.get('page') || 1);
+    const currentPage = getPageNumber(searchParams.get('page'));
 
     if (totalPosts <= itemsPerPage) return null;
 
-    const handlePageClick = ({ selected }: { selected: number }) => {
+    const getPageUrl = (page: number) => {
+        page = Math.min(Math.max(1, page), pageCount);
         const newParams = new URLSearchParams(searchParams?.toString() || '');
-        newParams.set('page', `${selected + 1}`);
-        const newUrl = `${pathname}?${newParams.toString()}`;
-        router.push(newUrl, { scroll: false });
+        if (page === 1) newParams.delete('page');
+        else newParams.set('page', String(page));
+        const query = newParams.toString();
+        return `${pathname}${query ? `?${query}` : ''}`;
+    };
+
+    const handlePageClick = ({ selected }: { selected: number }) => {
+        router.push(getPageUrl(selected + 1), { scroll: false });
     };
 
     return (
@@ -50,6 +57,8 @@ const Pagination: React.FC<PaginationProps> = ({ totalPosts, itemsPerPage, class
                 marginPagesDisplayed={1}
                 pageRangeDisplayed={2}
                 onPageChange={handlePageClick}
+                hrefBuilder={getPageUrl}
+                hrefAllControls
                 containerClassName="pagination"
                 pageClassName="pages"
                 activeClassName="active"

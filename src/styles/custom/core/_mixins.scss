@@ -314,7 +314,7 @@
 }
 
 @mixin font-size($sizeValue: 16) {
-  font-size: ($sizeValue / 16);
+  font-size: calc($sizeValue * 1rem / 16);
 }
 
 @mixin fontSize($sizeValue: 16, $lh-ratio: 1.4) {

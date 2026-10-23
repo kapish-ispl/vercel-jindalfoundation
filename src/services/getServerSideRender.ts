@@ -57,9 +57,9 @@ export async function serverRequest(
     return json;
   } catch (error: any) {
     const isDynamicServerError = error?.digest === 'DYNAMIC_SERVER_USAGE' || error?.message?.includes('Dynamic server usage');
-    if (!isDynamicServerError) {
-      console.error(`[serverRequest:${isServer ? 'server' : 'client'}] Fetch error:`, error);
-    }
+    // Next must see this signal to render no-store requests dynamically.
+    if (isDynamicServerError) throw error;
+    console.error(`[serverRequest:${isServer ? 'server' : 'client'}] Fetch error:`, error);
     return {
       error: true,
       message: 'Something went wrong while fetching data.',

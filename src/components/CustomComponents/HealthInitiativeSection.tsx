@@ -2,12 +2,15 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface SlideItem {
   id: number;
   image: string;
   statNumber: string;
   statText: string;
+  link?: string;
+  linkText?: string;
 }
 
 const slidesData: SlideItem[] = [
@@ -16,6 +19,8 @@ const slidesData: SlideItem[] = [
     image: '/images/girl-image.jpg',
     statNumber: '10 Lakh+',
     statText: 'Patients treated at Fortis OP Jindal Hospital Research Centre with 30% of bed capacity dedicated to critical care and 24x7 emergency services.',
+    link: '/fortis',
+    linkText: 'Explore Fortis OP Jindal Hospital',
   },
   {
     id: 2,
@@ -28,6 +33,8 @@ const slidesData: SlideItem[] = [
     image: '/images/milestones.webp',
     statNumber: '9 lakh+',
     statText: 'Adolescent girls benefited from Kishori Express, leading to a 98% reduction in severe anaemia in Banarpal Block',
+    link: '/kishori',
+    linkText: 'Discover Kishori Express',
   },
   {
     id: 4,
@@ -39,7 +46,9 @@ const slidesData: SlideItem[] = [
     id: 5,
     image: '/images/art_culture.jpg',
     statNumber: '50+',
-    statText: 'health centers upgraded in tribal regions',
+    statText: 'Preserving indigenous heritage, traditional folk arts, and community craft traditions through the Jindal Art Institute.',
+    link: '/jindal-art-institute',
+    linkText: 'Visit Jindal Art Institute',
   },
 ];
 
@@ -76,7 +85,7 @@ export default function HealthInitiativeSection() {
           <div className="col-lg-12 col-md-12">
             <div className="position-relative d-flex flex-column justify-content-center align-items-center py-4">
               {/* Stack Container */}
-              <div 
+              <div
                 className="position-relative w-100 d-flex justify-content-center align-items-center" 
                 style={{ height: '680px' }}
               >
@@ -123,22 +132,35 @@ export default function HealthInitiativeSection() {
                         priority={isActive}
                       />
 
-                      {/* Overlay (Active Card Only) */}
-                      {isActive && (
-                        <div 
-                          className="position-absolute bottom-0 start-0 w-100 p-4 text-white text-center"
-                          style={{
-                            background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.88) 100%)',
-                          }}
-                        >
-                          <h3 className="display-4 fw-bold mb-1 text-white">
-                            {slide.statNumber}
-                          </h3>
-                          <p className="fs-16 text-white-50 mb-0 leading-tight">
-                            {slide.statText}
-                          </p>
-                        </div>
-                      )}
+                      {/* Overlay */}
+                      <div
+                        className="position-absolute bottom-0 start-0 w-100 p-4 text-white text-center"
+                        style={{
+                          background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.88) 100%)',
+                          opacity: isActive ? 1 : 0,
+                          pointerEvents: isActive ? 'auto' : 'none',
+                          transition: 'opacity 0.4s ease',
+                        }}
+                      >
+                        <h3 className="display-4 fw-bold mb-1 text-white">
+                          {slide.statNumber}
+                        </h3>
+                        <p className="fs-16 text-white-50 mb-0 leading-tight">
+                          {slide.statText}
+                        </p>
+                        {slide.link && (
+                          <div className="mt-2">
+                            <Link
+                              href={slide.link}
+                              className="text-white text-decoration-underline fw-semibold fs-14 d-inline-flex align-items-center gap-1"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <span>{slide.linkText || 'Learn More'}</span>
+                              <span>&rarr;</span>
+                            </Link>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   );
                 })}

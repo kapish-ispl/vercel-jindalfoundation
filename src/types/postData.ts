@@ -1,3 +1,11 @@
+export interface InitialPostList {
+    posts: PostData[];
+    total: number;
+    query: string;
+}
+
+export type InitialPostLists = Record<string, InitialPostList>;
+
 export interface PostData {
     slug: string;
     id: string | number;

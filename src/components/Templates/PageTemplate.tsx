@@ -8,30 +8,43 @@ import AreaOfOperationsSection from '../CustomComponents/AreaOfOperationsSection
 import HealthInitiativeSection from '../CustomComponents/HealthInitiativeSection';
 import Area from '../CustomComponents/Area';
 import StackSlider from '../CustomComponents/StackSlider';
-import { PostListProps } from '../CustomComponents/PostList';
+import PostList, { PostListProps } from '../CustomComponents/PostList';
+import { getPostListKey } from '@/lib/postListQuery';
+import { normalizePagePath, CANONICAL_HOST } from '@/lib/seo';
 
 import Loader from '../Elements/Loader';
 
-const CustomContentSlider = dynamic(() => import('@/components/CustomComponents/CustomContentSlider'), { ssr: false });
-const CustomTabs = dynamic(() => import('@/components/CustomComponents/CustomTabs'), { ssr: false });
-const PostList = dynamic(() => import("@/components/CustomComponents/PostList"), {
-    ssr: false,
-    loading: () => <Loader minHeight="250px" text="Loading posts..." />
-});
-const CustomApproach = dynamic(() => import("@/components/CustomComponents/CustomApproach"), { ssr: false });
+const CustomContentSlider = dynamic(() => import('@/components/CustomComponents/CustomContentSlider'), { ssr: true });
+const CustomTabs = dynamic(() => import('@/components/CustomComponents/CustomTabs'), { ssr: true });
+const CustomApproach = dynamic(() => import("@/components/CustomComponents/CustomApproach"), { ssr: true });
 const WalkingFootsteps = dynamic(() => import("@/components/CustomComponents/WalkingFootsteps"), { ssr: false });
-const VideoSection = dynamic(() => import("@/components/CustomComponents/VideoSection"), { ssr: false });
-const HeadlinesSection = dynamic(() => import("@/components/CustomComponents/HeadlinesSection"), { ssr: false });
-const MediaSection = dynamic(() => import("@/components/CustomComponents/MediaSection"), { ssr: false });
-const CustomCounter = dynamic(() => import("@/components/CustomComponents/CustomCounter"), { ssr: false });
+const VideoSection = dynamic(() => import("@/components/CustomComponents/VideoSection"), { ssr: true });
+const HeadlinesSection = dynamic(() => import("@/components/CustomComponents/HeadlinesSection"), { ssr: true });
+const MediaSection = dynamic(() => import("@/components/CustomComponents/MediaSection"), { ssr: true });
+const CustomCounter = dynamic(() => import("@/components/CustomComponents/CustomCounter"), { ssr: true });
 const StateFootprintScroll = dynamic(() => import("@/components/CustomComponents/StateFootprintScroll"), { ssr: false });
 const JobForm = dynamic(() => import("@/components/Forms/JobForm"), {
     ssr: false,
     loading: () => <Loader minHeight="400px" text="Loading form..." />
 });
-const PageTemplate = ({ data }: any) => {
+const PageTemplate = ({ data, initialPostLists = {} }: any) => {
+    const normalizeLink = (domNode: DOMNode) => {
+        if (!(domNode instanceof Element) || domNode.name !== 'a' || !domNode.attribs.href) return;
+        const href = domNode.attribs.href;
+        if (href.startsWith('#') || /^(mailto:|tel:|javascript:)/i.test(href)) return;
+        try {
+            const url = new URL(href, `https://${CANONICAL_HOST}/${data.slug === 'home' ? '' : data.slug}`);
+            if ([CANONICAL_HOST, `www.${CANONICAL_HOST}`].includes(url.hostname) && !url.pathname.includes('.')) {
+                domNode.attribs.href = `${normalizePagePath(url.pathname)}${url.search}${url.hash}`;
+            }
+        } catch {
+            // Leave malformed CMS links unchanged rather than failing the page render.
+        }
+    };
+    const linkOptions: HTMLReactParserOptions = { replace: normalizeLink };
     const options: HTMLReactParserOptions = {
         replace: (domNode) => {
+            normalizeLink(domNode);
             if (domNode instanceof Element && domNode.attribs) {
                 if (!domNode.attribs) {
                     return;
@@ -51,12 +64,13 @@ const PageTemplate = ({ data }: any) => {
                         component: String(props.component ?? ''),
                         itemsperpage: Number(props.itemsperpage ?? 9),
                         pageSlug: data?.slug || '',
+                        initialData: initialPostLists[getPostListKey(String(props.slug ?? ''), String(props.component ?? ''), Number(props.itemsperpage ?? 9))],
                     };
                     return <PostList {...postData} />;
                 }
                 if (domNode.name == "customcontentslider") {
                     const props = attributesToProps(domNode.attribs);
-                    return <CustomContentSlider {...props} data={domToReact(domNode.children as DOMNode[])} />;
+                    return <CustomContentSlider {...props} data={domToReact(domNode.children as DOMNode[], linkOptions)} />;
                 }
                 if (domNode.name === "jobform") {
                     // const props = attributesToProps(domNode.attribs);
@@ -71,21 +85,21 @@ const PageTemplate = ({ data }: any) => {
 
                 if (domNode.name == "headlinessection") {
                     const props = attributesToProps(domNode.attribs);
-                    return <HeadlinesSection {...props} data={domToReact(domNode.children as DOMNode[])} />;
+                    return <HeadlinesSection {...props} data={domToReact(domNode.children as DOMNode[], linkOptions)} />;
                 }
                 if (domNode.name == "mediaarticles") {
                     const props = attributesToProps(domNode.attribs);
-                    return <MediaSection {...props} data={domToReact(domNode.children as DOMNode[])} />;
+                    return <MediaSection {...props} data={domToReact(domNode.children as DOMNode[], linkOptions)} />;
                 }
                 if (domNode.name == "videosection") {
                     const props = attributesToProps(domNode.attribs);
                     return <VideoSection {...props} />;
                 }
                 if (domNode.name === "customtabs") {
-                    return <CustomTabs data={domToReact(domNode.children as DOMNode[])} />;
+                    return <CustomTabs data={domToReact(domNode.children as DOMNode[], linkOptions)} />;
                 }
                 if (domNode.name === "customapproach") {
-                    return <CustomApproach data={domToReact(domNode.children as DOMNode[])} />;
+                    return <CustomApproach data={domToReact(domNode.children as DOMNode[], linkOptions)} />;
                 }
                 if (domNode.name == "statefootprintscroll") {
                     const props = attributesToProps(domNode.attribs);

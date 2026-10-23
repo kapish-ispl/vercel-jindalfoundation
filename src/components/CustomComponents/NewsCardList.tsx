@@ -20,42 +20,19 @@ const NewsCardList: React.FC<NewsCardListProps> = ({ postData, totalPosts, items
     const searchParams = useSearchParams();
     const router = useRouter();
     const typeDropdownRef = useRef<HTMLDivElement>(null);
-    const hasMounted = useRef(false);
-
-    const [dropdownValue, setDropdownValue] = useState<string | null>(() => {
-        const urlType = searchParams.get('type');
-        return urlType ?? 'Media Coverage';
-    });
+    const dropdownValue = searchParams.get('type') || 'Media Coverage';
     const [dropdownActive, setDropdownActive] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null | undefined>(null);
     const [selectedMediaType, setSelectedMediaType] = useState<string | null | undefined>(null);
 
     const currentItems = postData.slice(0, itemsPerPage);
 
-    // Sync dropdown value to URL
-    useEffect(() => {
-        if (!dropdownValue) return;
-
-        if (!hasMounted.current) {
-            hasMounted.current = true;
-            return;
-        }
-
-        if (searchParams.get('type') === dropdownValue) return;
-
+    const setDropdownValue = (type: string) => {
         const newParams = new URLSearchParams(searchParams?.toString() || '');
-        newParams.set('type', dropdownValue);
+        newParams.set('type', type);
+        newParams.delete('page');
         router.push(`${pathname}?${newParams.toString()}`, { scroll: false });
-    }, [dropdownValue, pathname, router, searchParams]);
-
-    // Reset page when dropdown changes
-    useEffect(() => {
-        const params = new URLSearchParams(searchParams?.toString() || '');
-        if (params.has('page')) {
-            params.delete('page');
-            router.push(`${pathname}?${params.toString()}`);
-        }
-    }, [dropdownValue]);
+    };
 
     // Close dropdown on outside click or Escape
     useEffect(() => {

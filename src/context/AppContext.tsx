@@ -1,8 +1,6 @@
 "use client";
 
-import { GET_JOB_ENDPOINT } from "@/config/apiConfig";
-import { CONSTANTS } from "@/config/constant";
-import { serverRequest } from "@/services/getServerSideRender";
+import { getJobMasterData } from "@/services/getJobMasterData";
 import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useState } from "react";
 
 import Loader from "@/components/Elements/Loader";
@@ -94,14 +92,20 @@ const AppContextProvider = ({
 
 
     useEffect(() => {
+        let isMounted = true;
         const getPostData = async () => {
-            const taxonomyInfo = await serverRequest({}, `${GET_JOB_ENDPOINT}`, CONSTANTS.REQUEST_GET);
-            if (taxonomyInfo !== undefined) {
-                setMastersData(taxonomyInfo);
+            try {
+                const taxonomyInfo = await getJobMasterData();
+                if (isMounted && taxonomyInfo) {
+                    setMastersData(taxonomyInfo);
+                }
+            } catch (error) {
+                console.error('[Job master data]', error);
             }
         };
 
         getPostData();
+        return () => { isMounted = false; };
     }, []);
 
     useEffect(() => {
