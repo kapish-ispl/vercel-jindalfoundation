@@ -1,0 +1,106 @@
+@use "variables" as *;
+@use "mixins" as *;
+
+body {
+  @include size(100%);
+  overscroll-behavior-y: none;
+  scrollbar-width: thin;
+  overscroll-behavior-y: none;
+  background-color: var(--white);
+  @include fontBase(var(--fontRegular));
+  font-size: $font14;
+
+  * {
+    @extend .scrollBar-smallWidth;
+  }
+}
+
+.app-mainWrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+body {
+  /* `overflow-x: hidden` also computes `overflow-y: auto`, which turns <body> into a
+     scroll container and breaks GSAP ScrollTrigger pinning (pinned sections jump or
+     never stick). `clip` suppresses horizontal overflow the same way WITHOUT creating a
+     scroll container, so pinning works. `hidden` stays as the fallback for browsers
+     without `clip` (Safari < 16). */
+  overflow-x: hidden;
+
+  @supports (overflow: clip) {
+    overflow-x: clip;
+  }
+
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+  @include transition(all 0.5s ease);
+
+  &:hover {
+    color: var(--lightBlue);
+  }
+}
+
+ul li,
+ol li,
+ul,
+ol {
+  list-style: none;
+  padding: 0px;
+  margin: 0px;
+}
+
+.custom_container {
+  @include mq('desktop-wide-max') {
+    max-width: 1536px;
+  }
+}
+
+.custom_content_container {
+  @include flexbox;
+  flex: 1;
+}
+
+.scrollBar-smallWidth {
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: 8px !important;
+    height: 8px !important;
+  }
+
+  /* Track */
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.5);
+    @include border-radius(10px);
+  }
+
+  /* Handle */
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.5);
+    @include border-radius(10px);
+  }
+
+  &::-webkit-scrollbar-thumb:window-inactive {
+    background: rgba(255, 255, 255, 0.5);
+  }
+}
+
+
+/* Begin Animation key frames */
+
+@keyframes leftToRightAnimate {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: -550px 0;
+  }
+}

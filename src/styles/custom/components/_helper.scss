@@ -1,0 +1,20 @@
+.px-8 {
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+.spacing-primary{
+    margin: 60px 0px;
+    @include mq(tablet-max){
+        margin: 80px 0px 60px 0px;
+    }
+    @include mq(desktop-wide){
+        margin: 100px 0px 60px 0px;
+    }
+    
+}
+.fs-24{
+    font-size: $font20 !important;
+    @include mq(tablet){
+        font-size: $font24 !important;
+    }
+}

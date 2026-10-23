@@ -1,0 +1,425 @@
+/* =====================================================
+   AreaOfOperationsSection.module.css
+   All class names are scoped by CSS Modules (Next.js
+   hashes them at build time), so these names can never
+   collide with any other global / third-party CSS on
+   the page — even if another component also has a class
+   literally called "container" or "map".
+===================================================== */
+
+.aooSection {
+  --aoo-base-fill: #BABBBE;      /* non-highlighted states */
+  --aoo-highlight-fill: #e8622c; /* our 5 operational states */
+  --aoo-line-color: #757474;     /* ← Keep original */
+  --aoo-dot-color: #e8622c;
+  --aoo-text-color: #1f2a24;
+  --aoo-accent: #14532d;
+
+  width: 100%;
+  padding: 64px 0;
+  box-sizing: border-box;
+}
+
+.aooContainer {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+
+.aooContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+/* =========================
+   MAP WRAPPER
+========================= */
+.aooMapWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 750px;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+}
+
+.aooMapHost {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* injected via JS: svg.classList.add(styles.aooMapSvg) */
+.aooMapHost :global(svg) {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+.aooMapHost :global(path) {
+  fill: var(--aoo-base-fill);
+  stroke: #ffffff;              /* ← Changed back to white */
+  stroke-width: 0.6;
+  transition: fill 0.2s ease;
+}
+
+/* Hide Andaman & Nicobar Islands */
+.aooMapHost :global(path#INAN) {
+  display: none;
+}
+
+/* Highlighted operational states */
+.aooMapHost :global(path#INDL),
+.aooMapHost :global(path#INJH),
+.aooMapHost :global(path#INCT),
+.aooMapHost :global(path#INOR),
+.aooMapHost :global(path#INAP),
+.aooMapHost :global(path#INMH) {
+  fill: var(--aoo-highlight-fill);
+  stroke: #ffffff;              /* ← Changed back to white */
+  stroke-width: 1;
+}
+
+/* =========================
+   LABEL OVERLAY (dots + connector lines)
+========================= */
+.aooOverlaySvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.aooConnector {
+  stroke: var(--aoo-line-color); /* ← Using original #757474 */
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  opacity: 0.85;
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  animation: aooDrawLine 2.1s ease forwards;
+  animation-delay: 2s;
+}
+
+.aooDot {
+  fill: var(--aoo-dot-color);
+  stroke: #ffffff;
+  stroke-width: 2;
+  opacity: 0;
+  animation: aooDotPop 0.4s ease forwards;
+  animation-delay: 1.1s;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.aooDotPulse {
+  fill: var(--aoo-dot-color);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes aooDrawLine {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes aooDotPop {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes aooPulse {
+  0% {
+    opacity: 0.45;
+    transform: scale(0.6);
+  }
+  70% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+}
+
+/* =========================
+   TEXT LABELS
+========================= */
+.aooLabel {
+  position: absolute;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  max-width: 34%;
+  opacity: 0;
+  animation: aooLabelFadeIn 1s ease forwards;
+  animation-delay: 2s;
+}
+
+@keyframes aooLabelFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+.aooLabelRight.aooLabel {
+  animation-name: aooLabelFadeInRight;
+}
+
+@keyframes aooLabelFadeInRight {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+.aooLabelLeft {
+  left: 0;
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.aooLabelRight {
+  right: 0;
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.aooLabelText {
+  display: inline-block;
+  font-size: clamp(11px, 2.6vw, 14px);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--aoo-text-color);
+  background: rgba(255, 255, 255, 0.82);
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* =========================
+   BUTTON — positioned absolutely on desktop,
+   hidden on mobile (shown below map)
+========================= */
+.aooBtnWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 750px;
+  margin: 0 auto;
+}
+
+/* Desktop: Button positioned over the map where Andaman was */
+.aooBtn {
+  position: absolute;
+  bottom: 15%;
+  right: 1%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+  text-decoration: none;
+  padding: 14px 24px;           /* ← Adjusted padding */
+  background: #3f5871;
+  color: #ffffff;
+  max-width: 420px;             /* ← Increased max-width */
+  width: auto;                  /* ← Auto width based on content */
+  overflow: hidden;
+  transition: background 0.3s ease, transform 0.2s ease;
+  animation: aooBtnFadeIn 0.6s ease both;
+  animation-delay: 0.3s;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* ← Added subtle shadow */
+}
+
+
+.aooBtn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(-100%);
+  transition: transform 0.45s ease;
+}
+
+.aooBtn:hover {
+  background: #344a5f;
+  transform: translateY(-1px);
+}
+
+.aooBtn:hover::before {
+  transform: translateX(0);
+}
+
+.aooBtnHeading {
+  position: relative;
+  letter-spacing: 0.08em;
+}
+
+.aooBtnSub {
+  position: relative;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  opacity: 0.95;
+}
+
+/* Mobile: Button moves below the map */
+.aooBtnMobile {
+  display: none;  /* Hidden on desktop */
+  position: relative;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+  text-decoration: none;
+  padding: 18px 32px;
+  border-radius: 2px;
+  background: #3f5871;
+  color: #ffffff;
+  width: 100%;
+  max-width: 460px;
+  overflow: hidden;
+  transition: background 0.3s ease, transform 0.2s ease;
+  animation: aooBtnFadeIn 0.6s ease both;
+  animation-delay: 0.3s;
+}
+
+.aooBtnMobile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(-100%);
+  transition: transform 0.45s ease;
+}
+
+.aooBtnMobile:hover {
+  background: #344a5f;
+  transform: translateY(-1px);
+}
+
+.aooBtnMobile:hover::before {
+  transform: translateX(0);
+}
+
+@keyframes aooBtnFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================
+   TABLET
+========================= */
+@media (max-width: 768px) {
+  .aooSection {
+    padding: 48px 0;
+  }
+
+  .aooMapWrapper {
+    max-width: 540px;
+  }
+
+  .aooLabelText {
+    font-size: clamp(10px, 2.4vw, 13px);
+    padding: 2px 6px;
+  }
+
+  /* Hide desktop button on tablet */
+  .aooBtn {
+    display: none;
+  }
+
+  /* Show mobile button on tablet */
+  .aooBtnMobile {
+    display: flex;
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 480px) {
+  .aooSection {
+    padding: 32px 0;
+  }
+
+  .aooContainer {
+    padding: 0 16px;
+  }
+
+  .aooContent {
+    gap: 20px;
+  }
+
+  .aooMapWrapper {
+    max-width: 400px;
+  }
+
+  .aooLabel {
+    max-width: 40%;
+  }
+
+  .aooLabelText {
+    font-size: 9.5px;
+    padding: 1px 5px;
+    white-space: normal;
+  }
+
+  .aooConnector {
+    stroke-width: 2;
+  }
+
+  /* Hide desktop button on mobile */
+  .aooBtn {
+    display: none;
+  }
+
+  /* Show mobile button on mobile */
+  .aooBtnMobile {
+    display: flex;
+    padding: 14px 20px;
+    max-width: 100%;
+  }
+
+  .aooBtnMobile .aooBtnHeading {
+    font-size: 14px;
+  }
+
+  .aooBtnMobile .aooBtnSub {
+    font-size: 10px;
+  }
+}

@@ -1,0 +1,595 @@
+@use '../../core/variables' as *;
+@use '../../core/mixins' as *;
+
+
+.c-heading-30 {
+    font-weight: var(--fontMedium);
+
+    @include fontSize(18);
+
+    @include mq('tablet') {
+        @include fontSize(20);
+    }
+
+    @include mq('desktop-min') {
+        @include fontSize(24);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(27);
+    }
+
+    @include mq('desktop-wide-max') {
+        @include fontSize(30);
+    }
+}
+
+.c-heading-36 {
+    font-weight: var(--fontMedium);
+
+    @include fontSize(20);
+
+    @include mq('tablet') {
+        @include fontSize(24);
+    }
+
+    @include mq('desktop-min') {
+        @include fontSize(28);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(32);
+    }
+
+    @include mq('desktop-wide-max') {
+        @include fontSize(36);
+    }
+}
+
+.c-heading-40 {
+    font-weight: var(--fontBold);
+
+    @include fontSize(20);
+
+    @include mq('tablet') {
+        @include fontSize(24);
+    }
+
+    @include mq('desktop-min') {
+        @include fontSize(30);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(35);
+    }
+
+    @include mq('desktop-wide-max') {
+        @include fontSize(40);
+    }
+
+    &.sm_lh {
+        line-height: 1.2 !important;
+    }
+}
+
+.c-heading-45 {
+    font-weight: var(--fontBold);
+
+    @include fontSize(22);
+
+    @include mq('tablet') {
+        @include fontSize(24);
+    }
+
+    @include mq('tablet-wide') {
+        @include fontSize(28);
+    }
+
+    @include mq('desktop-min') {
+        @include fontSize(32);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(38);
+    }
+
+    @include mq('desktop-wide-max') {
+        @include fontSize(45);
+    }
+}
+
+.c-heading-50 {
+    font-weight: var(--fontBold);
+
+    @include fontSize(26);
+
+    @include mq('tablet') {
+        @include fontSize(29);
+    }
+
+    @include mq('tablet-wide') {
+        @include fontSize(34);
+    }
+
+    @include mq('desktop-min') {
+        @include fontSize(40);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(50);
+    }
+
+    @include mq('desktop-wide-max') {
+        @include fontSize(50);
+    }
+}
+
+.c-heading-60 {
+    font-weight: var(--fontBold);
+
+    @include fontSize(26);
+
+    @include mq('tablet') {
+        @include fontSize(34);
+    }
+
+    @include mq('tablet-wide') {
+        @include fontSize(40);
+    }
+
+    @include mq('desktop-min') {
+        @include fontSize(48);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(55);
+    }
+
+    @include mq('desktop-wide-max') {
+        @include fontSize(60);
+    }
+}
+
+.c-heading-65 {
+    font-weight: var(--fontBold);
+
+    @include fontSize(24);
+
+    @include mq('tablet') {
+        @include fontSize(32);
+    }
+
+    @include mq('tablet-wide') {
+        @include fontSize(42);
+    }
+
+    @include mq('desktop-min') {
+        @include fontSize(52);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(60);
+    }
+
+    @include mq('desktop-wide-max') {
+        @include fontSize(65);
+    }
+
+    &.sm_lh {
+        line-height: 1.2 !important;
+    }
+}
+
+.c-heading-80 {
+    font-weight: var(--fontLight);
+
+    @include fontSize(28);
+
+    @include mq('tablet') {
+        @include fontSize(36);
+    }
+
+    @include mq('tablet-wide') {
+        @include fontSize(48);
+    }
+
+    @include mq('desktop-min') {
+        @include fontSize(58);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(68);
+    }
+
+    @include mq('desktop-wide-max') {
+        @include fontSize(80);
+    }
+
+    &.sm_lh {
+        line-height: 1.2 !important;
+    }
+
+    &.ft_SemiBold {
+        font-weight: var(--fontSemiBold) !important;
+    }
+
+    &.ft_light {
+        font-weight: var(--fontLight);
+    }
+
+    &.lh-normal {
+        line-height: 1;
+    }
+}
+
+.c-heading-76 {
+    font-weight: var(--fontLight);
+
+    @include fontSize(26);
+
+    @include mq('tablet') {
+        @include fontSize(34);
+    }
+
+    @include mq('tablet-wide') {
+        @include fontSize(44);
+    }
+
+    @include mq('desktop-min') {
+        @include fontSize(54);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(64);
+    }
+
+    @include mq('desktop-wide-max') {
+        @include fontSize(76);
+    }
+
+    &.sm_lh {
+        line-height: 1.2 !important;
+    }
+
+    &.ft_SemiBold {
+        font-weight: var(--fontSemiBold) !important;
+    }
+
+    &.ft_light {
+        font-weight: var(--fontLight);
+    }
+
+    &.lh-normal {
+        line-height: 1;
+    }
+}
+
+.c-content-16 {
+    font-weight: var(--fontRegular);
+
+    @include fontSize(14);
+
+    @include mq('tablet') {
+        @include fontSize(16, 1.6);
+    }
+
+    @include mq('desktop-min') {
+        @include fontSize(16, 1.6);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(16, 1.6);
+    }
+}
+
+.c-content-19 {
+    font-weight: var(--fontRegular);
+
+    @include fontSize(16, 1.6);
+
+    @include mq('desktop-min') {
+        @include fontSize(18, 1.6);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(19, 1.6);
+    }
+}
+
+.c-content-20 {
+    font-weight: var(--fontRegular);
+
+    @include fontSize(17, 1.6);
+
+    @include mq('desktop-min') {
+        @include fontSize(19, 1.6);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(20, 1.6);
+    }
+}
+
+.c-content-22 {
+    font-weight: var(--fontRegular);
+
+    @include fontSize(16);
+
+    @include mq('tablet') {
+        @include fontSize(18);
+    }
+
+    @include mq('desktop-min') {
+        @include fontSize(18);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(22);
+    }
+}
+
+.c-content-24 {
+    font-weight: var(--fontRegular);
+
+    @include fontSize(16);
+
+    @include mq('tablet') {
+        @include fontSize(18);
+    }
+
+    @include mq('desktop-min') {
+        @include fontSize(20);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(24);
+    }
+}
+
+.c-content-25 {
+    font-weight: var(--fontRegular);
+
+    @include fontSize(17);
+
+    @include mq('tablet') {
+        @include fontSize(19);
+    }
+
+    @include mq('desktop-min') {
+        @include fontSize(21);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(25);
+    }
+}
+
+
+.c-content-30 {
+    font-weight: var(--fontRegular);
+
+    @include fontSize(20);
+
+    @include mq('tablet') {
+        @include fontSize(22);
+    }
+
+    @include mq('desktop-min') {
+        @include fontSize(24);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(30);
+    }
+}
+
+.c-content-32 {
+    font-weight: var(--fontRegular);
+
+    @include fontSize(20);
+
+    @include mq('tablet') {
+        @include fontSize(24);
+    }
+
+    @include mq('desktop-min') {
+        @include fontSize(28);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(32);
+    }
+
+    &.ft_bold {
+        font-weight: var(--fontBold);
+    }
+
+    .ft_SemiBold {
+        font-weight: var(--fontSemiBold) !important;
+    }
+
+    &.pad_right68 {
+        @include mq(tablet-max) {
+            padding-right: 20px;
+        }
+
+        @include mq(desktop) {
+            padding-right: 40px;
+        }
+
+        @include mq(desktop-wide) {
+            padding-right: 68px;
+        }
+    }
+}
+
+.lh_1-8 {
+    line-height: 1.8 !important;
+}
+
+.font-medium {
+    font-weight: var(--fontMedium);
+}
+
+.lh_1-5 {
+    line-height: 1.5 !important;
+}
+
+.ft_light {
+    font-weight: var(--fontLight) !important;
+}
+
+.ft_regular {
+    font-weight: var(--fontRegular) !important;
+}
+
+.ft_medium {
+    font-weight: var(--fontMedium) !important;
+}
+
+.font-medium {
+    font-weight: var(--fontMedium) !important;
+}
+
+.ft_bold {
+    font-weight: var(--fontBold) !important;
+}
+
+.ft_semiBold {
+    font-weight: var(--fontSemiBold) !important;
+}
+
+.ft_extraLight {
+    font-weight: var(--fontExtralight) !important;
+}
+
+.lh_1-3 {
+    line-height: 1.3 !important;
+}
+
+.lh_1-1 {
+    line-height: 1.1 !important;
+}
+
+.lh_1-2 {
+    line-height: 1.2 !important;
+}
+
+.lh_1-6 {
+    line-height: 1.6 !important;
+}
+
+.c-heading-48 {
+    font-weight: var(--fontBold);
+
+    @include fontSize(22);
+
+    @include mq('tablet') {
+        @include fontSize(24);
+    }
+
+    @include mq('tablet-wide') {
+        @include fontSize(28);
+    }
+
+    @include mq('desktop-min') {
+        @include fontSize(32);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(38);
+    }
+
+    @include mq('desktop-wide-max') {
+        @include fontSize(48);
+    }
+
+    &.sm_lh {
+        line-height: 1.2 !important;
+    }
+
+}
+
+.c-heading-60 {
+    font-weight: var(--fontBold);
+
+    @include fontSize(26);
+
+    @include mq('tablet') {
+        @include fontSize(34);
+    }
+
+    @include mq('tablet-wide') {
+        @include fontSize(40);
+    }
+
+    @include mq('desktop-min') {
+        @include fontSize(48);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(55);
+    }
+
+    @include mq('desktop-wide-max') {
+        @include fontSize(60);
+    }
+
+    &.ft_medium {
+        font-weight: var(--fontMedium) !important;
+    }
+
+    &.ft_light {
+        font-weight: var(--fontLight) !important;
+    }
+
+    &.sm_lh {
+        line-height: 1.2 !important;
+    }
+}
+
+.c-heading-90 {
+    font-weight: var(--fontSemiBold);
+
+    @include fontSize(36);
+
+    @include mq('tablet') {
+        @include fontSize(46);
+    }
+
+    @include mq('tablet-wide') {
+        @include fontSize(56);
+    }
+
+    @include mq('desktop-min') {
+        @include fontSize(65);
+    }
+
+    @include mq('desktop-wide') {
+        @include fontSize(75);
+    }
+
+    @include mq('desktop-wide-max') {
+        @include fontSize(90);
+    }
+
+    &.sm_lh {
+        line-height: 1.2 !important;
+    }
+
+    &.ft_SemiBold {
+        font-weight: var(--fontSemiBold) !important;
+    }
+
+    &.ft_light {
+        font-weight: var(--fontLight);
+    }
+
+    &.lh-normal {
+        line-height: 1;
+    }
+}
+
+.cus-width940 {
+    max-width: 940px;
+}

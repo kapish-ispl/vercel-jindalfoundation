@@ -1,0 +1,61 @@
+@use "../core/variables" as *;
+@use "../core/mixins" as *;
+
+.breadcumbs {
+    ul {
+        @include flexbox;
+
+        li {
+            position: relative;
+            color: var(--color-white);
+            opacity: 1;
+            @include transition(all 0.3s ease-in-out);
+            //@apply text-white opacity-70 relative transition delay-150 ease-in-out text-xs;
+
+            a {
+                display: block;
+                font-size: $font16;
+                color: var(--color-white);
+                //@apply block text-xs;
+
+            }
+
+            &:hover,
+            &.active {
+                opacity: 1;
+                //@apply opacity-100 transition delay-150 ease-in-out;
+            }
+            &:hover{
+                >a{
+                    color: var(--color-orange);
+                }
+            }
+
+            +li {
+
+
+                &:before {
+                    content: "" !important;
+                    position: absolute;
+                    background-image: url("/images/icons/arrow.svg");
+                    height: 15px;
+                    width: 9px;
+                    display: block;
+                    left: 10px;
+                    background-size: cover;
+                    top: 5px;
+                }
+            }
+
+            &:last-child {
+                opacity: 1;
+                font-weight: 700;
+                //@apply opacity-100 transition delay-150 ease-in-out;
+            }
+        }
+    }
+
+    .breadcrumb-item+.breadcrumb-item {
+        padding-left: 32px;
+    }
+}

@@ -1,0 +1,583 @@
+@use '../core/variables' as *;
+@use '../core/mixins' as *;
+@use '../components/generic/sizes' as *;
+
+$overlay-opacity: 0.75;
+
+/* Wrapper: centers the modal */
+.c-modal__wrapper {
+  position: fixed;
+  inset: 0;
+  /* top:0 right:0 bottom:0 left:0 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.98);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+
+}
+
+/* Show / hide */
+.c-modal__wrapper.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+
+/* Dark overlay */
+.c-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+/* Modal box */
+.c-modal__box {
+  position: relative;
+  background: #F7F6F6;
+  //   width: min(720px, 100% - 32px);
+  //   max-height: calc(100vh - 80px);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.35);
+  overflow-y: auto;
+  max-height: 719px;
+  width: 100%;
+  height: calc(100vh - 80px);
+  overflow-x: hidden;
+}
+
+
+/* Close button (X in top-right) */
+.c-modal__box--close {
+  position: absolute;
+  top: 12px;
+  right: 20px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 999px;
+  //   border: none;
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.c-modal__box--close::before,
+.c-modal__box--close::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 2px;
+  background: var(--color-grey4);
+  border-radius: 999px;
+}
+
+.c-modal__box--close::before {
+  transform: rotate(45deg);
+}
+
+.c-modal__box--close::after {
+  transform: rotate(-45deg);
+}
+
+.c-modal__box--close:hover {
+  background: #e2e8f0;
+
+}
+
+/* Content layout */
+.c-modal__header {
+  margin-bottom: 12px;
+}
+
+.c-modal__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.c-modal__body {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+.c-modal__body p+p {
+  margin-top: 10px;
+}
+
+.c-modal__footer {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Primary button like in the design (green “Okay”) */
+.c-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.c-btn--primary {
+  background: #00a651;
+  color: #ffffff;
+}
+
+.c-btn--primary:hover {
+  background: #009046;
+}
+
+/* Mobile tweaks */
+@media (max-width: 576px) {
+  .c-modal__box {
+    width: calc(100% - 24px);
+    padding: 20px 16px 18px;
+    border-radius: 6px;
+  }
+
+  .c-modal__title {
+    font-size: 18px;
+  }
+}
+
+.c-modal__box {
+
+  // @include flexbox;
+  // @include flex-direction(column, vertical);
+  // @include mq(tablet-max){
+  //     @include flex-direction(row, horizontal);
+  // }
+  &.v2 {
+    .col-lg-5 {
+      @include mq(tablet-max) {
+        height: 100%;
+      }
+    }
+  }
+
+  &-ls {
+    height: 100%;
+
+    // @include mq(tablet-max){
+    //     width: 555px;
+    // }
+    .media {
+      max-height: 640px;
+      height: 100%;
+
+      @include mq(tablet-max) {
+        max-height: inherit;
+
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center center;
+      }
+    }
+  }
+
+  &-rs {
+    // @include mq(tablet-max){
+    //     width: calc(100% - 555px);
+    // }
+    padding: 30px 20px;
+
+    @include mq(tablet-max) {
+      padding: 40px 30px 40px 20px;
+    }
+
+    .c-modal__box-body {
+      .c-modal__box_highlights {
+        border-left: 2px solid var(--color-accent-peach);
+        padding-left: 20px;
+        // position: relative;
+        // &::before{
+        //   content: "";
+        //   position: absolute;
+        //   left: 0;
+        //   top: 50%;
+        //   background: var(--color-accent-peach);
+        //   height: 2px;
+        //   width: 60px;
+        // }
+      }
+    }
+
+    .c-modal__box-header {
+      &.c-withBorder {
+        border-bottom: 1px solid var(--color-grey4);
+        padding-bottom: 25px;
+        margin-bottom: 30px;
+
+        @include mq(tablet-max) {
+          padding-bottom: 30px;
+          margin-bottom: 33px;
+        }
+      }
+    }
+  }
+}
+
+// New Modern Modal Styles (BEM)
+.c-modal-v2 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 20px;
+  backdrop-filter: blur(2px);
+
+  &__container {
+    background: #fff;
+    width: 100%;
+    max-width: 900px;
+    max-height: 90vh;
+    border-radius: 4px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border: 1px solid #ddd;
+    overflow: hidden;
+  }
+
+  &__header {
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  &__title {
+    //@include font-size(32);
+    font-weight: 500;
+    color: #636466;
+    margin: 0;
+
+  }
+
+  &__close {
+    background: transparent;
+    border: none;
+    font-size: 36px;
+    color: #b5b5b5;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    margin-top: -10px;
+    transition: color 0.2s;
+
+    &:hover {
+      color: #333;
+    }
+  }
+
+  &__body {
+    padding: 35px;
+    overflow-y: auto;
+    font-size: 18px;
+    line-height: 1.6;
+    color: #666;
+
+    h4 {
+      color: #e6854b;
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      margin-top: 10px;
+    }
+
+    p {
+      margin-bottom: 20px;
+    }
+
+    .modal_disclaimer_link {
+      color: #333;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+  }
+
+  &__footer {
+    @include flexbox;
+    @include justify-content(center);
+    gap: 10px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+}
+
+
+.cookie-overlay-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, $overlay-opacity);
+  z-index: 1050;
+  pointer-events: all;
+}
+
+.cookie-banner-wrapper {
+  z-index: 1060;
+  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.2);
+  border-top: 1px solid #dee2e6;
+
+  .cookie-text {
+    @include font-size(12);
+    line-height: 1.5;
+    color: #333;
+
+    @include mq(tablet-max) {
+      @include font-size(13);
+    }
+
+    a {
+      text-decoration: none;
+
+
+    }
+  }
+
+  .cookie-buttons {
+    .btn {
+      padding: 8px 35px;
+      @include font-size(12);
+      font-weight: var(--fontRegular);
+      border-radius: 4px;
+      transition: opacity 0.2s ease;
+
+      @include mq(tablet-max) {
+        @include font-size(13);
+      }
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+
+    .btn-accept {
+      background-color: var(--color-primary);
+      border: none;
+    }
+
+    .btn-reject {
+      background-color: var(--color-secondary);
+      border: none;
+    }
+  }
+}
+
+// AGM (Annual General Meeting) Modal Styles
+.c-agm-modal {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+  padding: 16px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  animation: agmFadeIn 0.25s ease-out forwards;
+
+  &__container {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    animation: agmScaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  &__overlay {
+    display: none;
+  }
+
+  &__close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
+    color: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    padding: 0;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      transform: scale(1.1);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  &__content {
+    position: relative;
+    z-index: 2;
+    padding: 44px 24px 36px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    @media (min-width: 576px) {
+      padding: 52px 36px 42px;
+    }
+  }
+
+  &__title {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    line-height: 1.35;
+    margin: 0 0 18px;
+    text-transform: uppercase;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+
+    sup {
+      font-size: 0.6em;
+      top: -0.5em;
+      margin-left: 1px;
+      margin-right: 2px;
+    }
+
+    @media (min-width: 576px) {
+      font-size: 24px;
+      margin-bottom: 22px;
+    }
+
+    @media (min-width: 768px) {
+      font-size: 27px;
+    }
+  }
+
+  &__datetime {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 26px;
+  }
+
+  &__date,
+  &__time {
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+
+    @media (min-width: 576px) {
+      font-size: 20px;
+    }
+
+    @media (min-width: 768px) {
+      font-size: 22px;
+    }
+  }
+
+  &__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 28px;
+    background: rgba(92, 95, 102, 0.88);
+    color: #ffffff !important;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 9999px;
+    text-decoration: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    transition: all 0.25s ease;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    cursor: pointer;
+    outline: none;
+
+    @media (min-width: 576px) {
+      font-size: 16px;
+      padding: 13px 32px;
+    }
+
+    &:hover {
+      background: rgba(115, 119, 128, 0.95);
+      border-color: rgba(255, 255, 255, 0.35);
+      box-shadow: 0 6px 22px rgba(0, 0, 0, 0.5);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+@keyframes agmFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes agmScaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

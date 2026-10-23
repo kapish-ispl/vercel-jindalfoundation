@@ -1,0 +1,241 @@
+@use '../core/variables' as *;
+@use '../core/mixins' as *;
+
+/* ------------------------------------------------------------------ *
+ *  Pinned India map
+ *  step 1 - plain map  ->  step 2 - focus states lit + CTA
+ * ------------------------------------------------------------------ */
+
+/* Used by .mouse-scroll-indicator below. @keyframes can't be nested inside a selector
+   in real CSS, so it has to live at the top level of the file rather than inside
+   .state-scroll. */
+@keyframes state-scroll-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.state-scroll {
+  /* label + leader-line colour — one place to change if the tone shifts */
+  --state-scroll-ink: #2b3a55;
+  --state-scroll-line: #2b3a55;
+
+  position: relative;
+  background-color: rgb(242, 243, 244);
+
+  &__pin {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100svh;
+    @include flexbox();
+    @include flex-direction(column, vertical);
+    @include justify-content(center);
+    padding: 40px 0;
+    overflow: hidden;
+
+    @include mq('tablet') {
+      padding: 56px 0;
+    }
+  }
+
+  /* Positioning context for the CTA, so it can align to the right edge of the section
+       rather than to the narrower, centred map box. */
+  &__inner {
+    position: relative;
+  }
+
+  /* ---------------- map ---------------- */
+
+  &__stage {
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+    /* Mobile: scale map so side leader lines & labels fit comfortably within the screen */
+    max-width: min(calc(100vw - 28px), 400px, 58svh);
+    padding: 0 8px;
+
+    @include mq('phablet') {
+      max-width: min(calc(100% - 32px), 540px, 68svh);
+      padding: 0 14px;
+    }
+
+    @include mq('tablet') {
+      max-width: min(100%, 740px, 78vh);
+      padding: 0;
+    }
+
+    @include mq('desktop') {
+      max-width: min(100%, 860px, 82vh);
+      padding: 0;
+    }
+  }
+
+  &__maps {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+  }
+
+  &__svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+
+    path {
+      transition: fill 0.35s ease;
+    }
+
+    circle {
+      display: none;
+    }
+  }
+
+  /* ---------------- leader line + label ---------------- *
+     *  The wrapper spans the whole map box, so the dot, the connector and the label can
+     *  each be placed as a % of the map and stay put at any size. `labelX` in the data
+     *  is what holds the text clear of the artwork; the line just stretches to reach it.
+     * ------------------------------------------------------- */
+
+  &__pointer {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  &__pointer-dot {
+    position: absolute;
+    @include size(4px);
+    border-radius: 50%;
+    background: var(--state-scroll-ink);
+    transform: translate(-50%, -50%);
+
+    @include mq('tablet') {
+      @include size(6px);
+    }
+  }
+
+  /* width comes from the data; transform-origin is set inline so the line draws
+       outward from the dot rather than inward from the label */
+  &__pointer-line {
+    position: absolute;
+    height: 1px;
+    background: var(--state-scroll-line);
+    transform: scaleX(0);
+  }
+
+  &__pointer-label {
+    position: absolute;
+    transform: translateY(-50%);
+    font-size: 10px;
+    font-weight: var(--fontMedium);
+    line-height: 1.1;
+    white-space: nowrap;
+    color: var(--state-scroll-ink);
+
+    @include mq('phablet') {
+      font-size: $font12;
+      font-weight: var(--fontRegular);
+    }
+
+    @include mq('tablet') {
+      font-size: $font14;
+    }
+
+    @include mq('desktop') {
+      font-size: $font16;
+    }
+
+    &--left {
+      padding-right: 5px;
+      text-align: right;
+
+      @include mq('tablet') {
+        padding-right: 9px;
+      }
+    }
+
+    &--right {
+      padding-left: 5px;
+
+      @include mq('tablet') {
+        padding-left: 9px;
+      }
+    }
+  }
+
+  /* ---------------- CTA ---------------- *
+     *  Look and layout come from the shared .area-ops-btn in globals.scss.
+     *  All this adds is the hidden start state GSAP animates from.
+     * ------------------------------------- */
+
+  &__cta {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  /* Qualified with BOTH classes on purpose: .area-ops-btn is the same specificity
+       (0,1,0) and is emitted later in the stylesheet, so a bare .state-scroll__cta rule
+       would lose the tie on `right` / `margin`. */
+  &__cta.area-ops-btn {
+    /* From 992px up the shared button is absolutely positioned. Its default inset of
+           `right: 12%` parked it over the map — pull it out to the container's edge. */
+    @include mq('tablet-max') {
+      right: calc(var(--bs-gutter-x, 1.5rem) / 2);
+      bottom: 8%;
+    }
+
+    /* Below 992px it drops into normal flow, centred by the shared styles. Keep it
+           right-aligned there too, until it is nearly full width and alignment stops
+           reading as a choice. */
+    @media (min-width: 576px) and (max-width: 991px) {
+      margin-left: auto;
+      margin-right: 0;
+    }
+  }
+
+  /* ---------------- mouse-scroll indicator ---------------- *
+     *  Mobile (below 768px): stays in normal flow, centred below the map — unchanged
+     *  from before. Tablet and desktop (768px+): moves into the exact spot the CTA
+     *  button occupies (.area-ops-btn above), since the two are never on screen at the
+     *  same time — the indicator shows while scrolling towards the reveal, the CTA
+     *  replaces it once the states light up.
+     * ---------------------------------------------------------- */
+
+  .mouse-scroll-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    animation: state-scroll-bounce 1.5s ease-in-out infinite;
+
+    // @include mq('tablet') {
+    //   /* content-sized so margin-left: auto has room to push it to the right,
+    //            instead of a full-width block sitting flush left */
+    //   width: fit-content;
+    //   margin-left: auto;
+    //   margin-right: 0;
+    // }
+
+    @include mq('tablet-wide') {
+      /* From 992px this is the CTA's own anchor point — see &__cta.area-ops-btn
+               above, which uses the same right / bottom values. */
+      position: absolute;
+      right: 15%;
+      bottom: 12%;
+      margin: 0;
+    }
+  }
+
+  .mouse-scroll-indicator__label {
+    margin-bottom: 0.5rem;
+    font-size: $font14;
+  }
+}
